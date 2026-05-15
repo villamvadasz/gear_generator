@@ -1,3 +1,5 @@
+<img width="802" height="627" alt="grafik" src="https://github.com/user-attachments/assets/7fd6addf-55ba-4a51-9c07-f5c94678adb6" />
+
 # Involute gear generator project
 This is a simple C project to generate a profile shifter involute gear. It can draw the gear into a window using SDL2, and also it will emitt DXF files.
 However the project is in early shape, so dont expect any user friendly GUI. And also the file naming and architecture is strange.
