@@ -85,16 +85,6 @@ void gear_sdl(unsigned int z1, unsigned int z2, float module, float pressureAngl
 	drawer_sdl = 0;
 }
 
-float solve_theta(float phi) {
-    float t = phi + 0.5f; // initial guess
-    for(int i=0; i<10; i++) {
-        float f  = t - atanf(t) - phi;
-        float df = 1.0f - 1.0f/(1.0f + t*t);
-        t = t - f/df;
-    }
-    return t;
-}
-
 static void gear_draw_profile_shifter_calculator(unsigned int z1, unsigned int z2, float module, float pressureAngleDeg, float x1, float x2, float rotation) {
 	GearStructure gearA;
 	GearStructure gearB;
@@ -156,35 +146,30 @@ static void gear_draw_profile_shifter_calculator(unsigned int z1, unsigned int z
 			angle = t * anglePerTooth;
 
 			if (angleInsideTooth < gearA.rising_phi) {
-				//drawRed = 1;
 				//rising + tip
 				float tetha = solve_theta(angleInsideTooth);
-				float resultx = rb * (cos(tetha) + (tetha * sin(tetha)) );
-				float resulty = rb * (sin(tetha) - (tetha * cos(tetha)) );
-				float distance = sqrt( pow(resulty, 2.0) + pow(resultx, 2.0) );
+				float resultx = 0.0;
+				float resulty = 0.0;
+				involute_curve(&resultx, &resulty, rb, tetha) {
 
 				Point pb = rotatePoint(createPoint(resultx, resulty), createPoint(0.0, 0.0), angle + rotation);
 				//drawPoint_dxf(pb);
 				gear_draw_profile_shifter_calculator_segment(pb);
-				//drawRed = 0;
 			} else if (angleInsideTooth < gearA.tip_phi) {
-				//drawRed = 1;
 				Point p = rotatePoint(createPoint(Ctip.r, 0.0), createPoint(0.0, 0.0), angle + angleInsideTooth + rotation);
 				//drawPoint_dxf(p);
 				gear_draw_profile_shifter_calculator_segment(p);
-				//drawRed = 0;
 			} else if (angleInsideTooth < gearA.falling_phi) {
 				//drawRed = 1;
 				float angleInsideToothLow = angleInsideTooth - gearA.tip_phi;
 				float tetha = solve_theta(gearA.rising_dphi - angleInsideToothLow);
-				float resultx = rb * (cos(tetha) + (tetha * sin(tetha)) );
-				float resulty = rb * (sin(tetha) - (tetha * cos(tetha)) );
+				float resultx = 0.0;
+				float resulty = 0.0;
+				involute_curve(&resultx, &resulty, rb, tetha) {
 
-				//Point pb = rotatePoint(createPoint(resultx, -resulty), createPoint(0.0, 0.0), (t + 1.0) * anglePerTooth - (gearA.tip_phi - gearA.rising_dphi));
 				Point pb = rotatePoint(createPoint(resultx, -resulty), createPoint(0.0, 0.0), (t * anglePerTooth) +  gearA.falling_phi + rotation);
 				//drawPoint_dxf(pb);
 				gear_draw_profile_shifter_calculator_segment(pb);
-				//drawRed = 0;
 			} else if (angleInsideTooth < gearA.root_phi) {
 				float angleInsideToothLow = angleInsideTooth - gearA.tip_phi;
 				Point p = rotatePoint(createPoint(Croot.r, 0.0), createPoint(0.0, 0.0), angle + angleInsideToothLow + gearA.tip_phi + rotation);

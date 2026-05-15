@@ -217,3 +217,20 @@ static float involute_function_d_to_phi(float d, float db) {
 	result = a - b;
 	return result;
 }
+
+float solve_theta(float phi) {
+    float t = phi + 0.5f; // initial guess
+    for(int i=0; i<10; i++) {
+        float f  = t - atanf(t) - phi;
+        float df = 1.0f - 1.0f/(1.0f + t*t);
+        t = t - f/df;
+    }
+    return t;
+}
+
+void involute_curve(float *x, float *y, float rb, float tetha) {
+	if ((x != NULL) && (y != NULL)) {
+		*x = rb * (cos(tetha) + (tetha * sin(tetha)) );
+		*y = rb * (sin(tetha) - (tetha * cos(tetha)) );
+	}
+}

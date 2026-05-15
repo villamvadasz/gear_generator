@@ -40,5 +40,6 @@
 	extern void gear_calculator_x1x2(float *x1, float *x2, float a, float m, float z1, float z2, float alpha);
 	extern void gear_standard_calculator(float m, float alpha, float z1, float z2, GearStructure *gearA, GearStructure *gearB);
 	extern void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, float x1, float x2, GearStructure *gearA, GearStructure *gearB);
-
+	extern float solve_theta(float phi);
+	extern void involute_curve(float *x, float *y, float rb, float tetha);
 #endif

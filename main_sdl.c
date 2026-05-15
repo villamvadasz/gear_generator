@@ -78,8 +78,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
     // Clear the screen with the current color
     SDL_RenderClear(renderer);
 
-	gear_dxf(12, 24, 3.0, 20.0, 0.6, 0.36, "gearA.dxf");
-	gear_dxf(24, 12, 3.0, 20.0, 0.36, 0.6, "gearB.dxf");
 	
     // Present the rendered content to the screen
     SDL_RenderPresent(renderer);
@@ -149,6 +147,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		}
 	}
 	
+	gear_dxf(z1, z2, module, pressureAngleDeg, x1, x2, "gearA.dxf");
+	gear_dxf(z2, z1, module, pressureAngleDeg, x2, x1, "gearB.dxf");
 	
     // Wait for 5 seconds
 	gameRunning = 1;
