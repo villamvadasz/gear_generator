@@ -1,0 +1,7 @@
+/cJSON.o
+/cJSON_Utils.o
+/dxf.o
+/gear_calculator.o
+/gear_sdl.o
+/gear_simple.o
+/geometry.o
