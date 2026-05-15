@@ -47,9 +47,13 @@ q for exit
 
 ## Used sites
 Beside chatgpt which told me a lot for formulas just by asking it for:
+
 https://khkgears.net/new/gear_knowledge/gear_technical_reference/calculation_gear_dimensions.html
+
 https://www.fictiv.com/articles/creating-involute-gears-in-cad
+
 https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
+
 http://www.gearseds.com/files/Approx_method_draw_involute_teeth_rev2.pdf
 
 # Gears
