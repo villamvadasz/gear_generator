@@ -184,7 +184,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	
 		//rotation = 0.0;
 		float rotationA = rotation;
-		float rotationB = rotation * (gearA.z / gearB.z) + DEG2RAD(180.0) + (0.7 * DEG2RAD(360.0) / gearB.z);
+		float rotationB = rotation * (gearA.z / gearB.z) + (DEG2RAD(180.0) + (DEG2RAD(180.0) / gearB.z));
 		
 		gear_sdl(0.0, 0.0, rotationA, visible_diameters, &gearA);
 		gear_sdl(distance, 0.0, -rotationB, visible_diameters, &gearB);

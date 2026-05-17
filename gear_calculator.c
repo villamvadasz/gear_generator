@@ -36,6 +36,9 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 		gear->h = (2.25 + gear->y - (gear->x + x2)) * gear->m;
 		gear->da = gear->d + 2.0 * gear->ha;
 		gear->df = gear->da - (2.0 * gear->h);
+		if (gear->df < 0.0) {
+			gear->df = 0.0;
+		}
 
 		gear->tooth_angle = DEG2RAD(360.0 / gear->z);
 		gear->tip_tetha = (M_PI + (4.0 * gear->x * tan(gear->alpha) )) / (gear->z);

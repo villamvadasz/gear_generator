@@ -41,7 +41,7 @@ static void gear_draw_profile_shifter_calculator(float x, float y, float rotatio
 		float rb = gear->db / 2.0;
 		float rt = gear->da / 2.0;
 
-		rotation += -anglePerTooth / 4.0;
+		rotation += -(gear->tip_phi + gear->rising_phi) / 2.0;
 
 
 		Point Pa = createPoint(x, 0.0);
@@ -50,6 +50,7 @@ static void gear_draw_profile_shifter_calculator(float x, float y, float rotatio
 		Circle Cworkingpitch = createCircle(Pa, gear->dw / 2.0);
 		Circle Ctip = createCircle(Pa, gear->da / 2.0);
 		Circle Croot = createCircle(Pa, gear->df / 2.0);
+		Circle Cshaft = createCircle(Pa, 0.25);
 
 		if (visible_diameters) {
 			unsigned char tempStr[128];
@@ -76,6 +77,8 @@ static void gear_draw_profile_shifter_calculator(float x, float y, float rotatio
 			sprintf(tempStr, "Cworkingpitch d=%2.4f", Cworkingpitch.r * 2.0);
 			renderText_dxf(tempStr, Cworkingpitch.o.x, Cworkingpitch.o.y + Cworkingpitch.r);
 			drawCircle_dxf(Cworkingpitch);
+
+			drawCircle_dxf(Cshaft);
 		}
 
 		
