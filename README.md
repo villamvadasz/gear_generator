@@ -1,3 +1,5 @@
+<img width="802" height="627" alt="grafik" src="https://github.com/user-attachments/assets/7fd6addf-55ba-4a51-9c07-f5c94678adb6" />
+
 # Involute gear generator project
 This is a simple C project to generate a profile shifter involute gear. It can draw the gear into a window using SDL2, and also it will emitt DXF files.
 However the project is in early shape, so dont expect any user friendly GUI. And also the file naming and architecture is strange.
@@ -47,9 +49,13 @@ q for exit
 
 ## Used sites
 Beside chatgpt which told me a lot for formulas just by asking it for:
+
 https://khkgears.net/new/gear_knowledge/gear_technical_reference/calculation_gear_dimensions.html
+
 https://www.fictiv.com/articles/creating-involute-gears-in-cad
+
 https://khkgears.net/new/gear_knowledge/gear_technical_reference/involute_gear_profile.html
+
 http://www.gearseds.com/files/Approx_method_draw_involute_teeth_rev2.pdf
 
 # Gears
