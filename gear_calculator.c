@@ -15,132 +15,49 @@ void gear_teeth_calculator(float m, float a, float i, float *z1, float *z2) {
 	}
 }
 
-void gear_standard_calculator(float m, float alpha, float z1, float z2, GearStructure *gearA, GearStructure *gearB) {
-	if ((gearA != NULL) && (gearB != NULL)) {
-		gearA->m = m;
-		gearA->alpha = alpha;
-		gearA->z = z1;
-		gearA->x = 0.0;
-
-		gearB->m = m;
-		gearB->alpha = alpha;
-		gearB->z = z2;
-		gearB->x = 0.0;
-
-		gearA->a = (((gearA->z + gearB->z) * gearA->m) / 2.0);
-		gearA->d = (gearA->z * gearA->m);
-		gearA->db = gearA->d * cos(gearA->alpha);
-		gearA->ha = 1.0 * gearA->m;
-		gearA->h = 2.25 * gearA->m;
-		gearA->da = gearA->d + 2.0 * gearA->ha;
-		gearA->df = gearA->da - (2.5 * gearA->h);
-		
-	}
-}
-
-void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, float x1, float x2, GearStructure *gearA, GearStructure *gearB) {
-	if ((gearA != NULL) && (gearB != NULL)) {
+void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, float x1, float x2, GearStructure *gear) {
+	if (gear != NULL) {
 		//https://khkgears.net/new/gear_knowledge/gear_technical_reference/calculation_gear_dimensions.html
-		gearA->m = m;
-		gearA->alpha = alpha;
-		gearA->z = z1;
-		gearA->x = x1;
+		gear->m = m;
+		gear->alpha = alpha;
+		gear->z = z1;
+		gear->x = x1;
 
-		gearB->m = m;
-		gearB->alpha = alpha;
-		gearB->z = z2;
-		gearB->x = x2;
+		gear->inv_alphaw = 2.0 * tan(gear->alpha) * ( (gear->x + x2) / (gear->z + z2) ) + involute_function(gear->alpha);
+		gear->inv_alphaw = 2.0 * tan(gear->alpha) * ( (gear->x + x2) / (gear->z + z2) ) + involute_function(gear->alpha);
+		gear->alphaw = gear_working_pressure_angle(gear->inv_alphaw);
+		gear->y = ((gear->z + z2) / 2.0) * (((cos(gear->alpha) / cos (gear->alphaw)) - 1.0));
+		gear->a = ((gear->z + z2) / (2.0 + (gear->y))) * gear->m;
+		gear->a = (((gear->z + z2) / 2.0) + (gear->y)) * gear->m;
+		gear->d = (gear->z * gear->m);
+		gear->db = gear->d * cos(gear->alpha);
+		gear->dw = gear->db / cos(gear->alphaw);
+		gear->ha = (1.0 + gear->y - x2) * gear->m;
+		gear->h = (2.25 + gear->y - (gear->x + x2)) * gear->m;
+		gear->da = gear->d + 2.0 * gear->ha;
+		gear->df = gear->da - (2.0 * gear->h);
 
-		gearA->inv_alphaw = 2.0 * tan(gearA->alpha) * ( (gearA->x + gearB->x) / (gearA->z + gearB->z) ) + involute_function(gearA->alpha);
-		gearA->alphaw = gear_working_pressure_angle(gearA->inv_alphaw);
-		gearA->y = ((gearA->z + gearB->z) / 2.0) * (((cos(gearA->alpha) / cos (gearA->alphaw)) - 1.0));
-		gearA->a = ((gearA->z + gearB->z) / (2.0 + (gearA->y))) * gearA->m;
-		gearA->a = (((gearA->z + gearB->z) / 2.0) + (gearA->y)) * gearA->m;
-		gearA->d = (gearA->z * gearA->m);
-		gearA->db = gearA->d * cos(gearA->alpha);
-		gearA->dw = gearA->db / cos(gearA->alphaw);
-		gearA->ha = (1.0 + gearA->y - gearB->x) * gearA->m;
-		gearA->h = (2.25 + gearA->y - (gearA->x + gearB->x)) * gearA->m;
-		gearA->da = gearA->d + 2.0 * gearA->ha;
-		gearA->df = gearA->da - (2.0 * gearA->h);
+		gear->tooth_angle = DEG2RAD(360.0 / gear->z);
+		gear->tip_tetha = (M_PI + (4.0 * gear->x * tan(gear->alpha) )) / (gear->z);
 
-		gearA->tooth_angle = DEG2RAD(360.0 / gearA->z);
-		gearA->tip_tetha = (M_PI + (4.0 * gearA->x * tan(gearA->alpha) )) / (gearA->z);
-
-		gearA->rising_wp_dphi = involute_function_d_to_phi(gearA->dw, gearA->db);
-		gearA->rising_dphi = involute_function_d_to_phi(gearA->da, gearA->db);
-		gearA->tip_dphi = (DEG2RAD(180.0) / gearA->z) - (2.0 * (gearA->rising_dphi - gearA->rising_wp_dphi));
-		if (gearA->tip_dphi <= 0.0) {
-			gearA->tip_dphi = 0;
+		gear->rising_wp_dphi = involute_function_d_to_phi(gear->dw, gear->db);
+		gear->rising_dphi = involute_function_d_to_phi(gear->da, gear->db);
+		gear->tip_dphi = (DEG2RAD(180.0) / gear->z) - (2.0 * (gear->rising_dphi - gear->rising_wp_dphi));
+		if (gear->tip_dphi <= 0.0) {
+			gear->tip_dphi = 0;
 		}
-		gearA->falling_dphi = gearA->rising_dphi;
-		gearA->falling_wp_dphi = gearA->rising_wp_dphi;
-		gearA->root_dphi = gearA->tooth_angle - (gearA->tip_dphi + gearA->rising_dphi + gearA->rising_dphi);
-		if (gearA->root_dphi <= 0.0) {
-			gearA->root_dphi = 0.0;
+		gear->falling_dphi = gear->rising_dphi;
+		gear->falling_wp_dphi = gear->rising_wp_dphi;
+		gear->root_dphi = gear->tooth_angle - (gear->tip_dphi + gear->rising_dphi + gear->rising_dphi);
+		if (gear->root_dphi <= 0.0) {
+			gear->root_dphi = 0.0;
 		}
 
-		gearA->rising_phi = gearA->rising_dphi;
-		gearA->tip_phi = gearA->rising_phi + gearA->tip_dphi;
-		gearA->falling_phi = gearA->tip_phi + gearA->falling_dphi;
-		gearA->root_phi = gearA->falling_phi + gearA->root_dphi;
-
-		gearB->inv_alphaw = 2.0 * tan(gearB->alpha) * ( (gearB->x + gearA->x) / (gearB->z + gearA->z) ) + involute_function(gearB->alpha);
-		gearB->alphaw = gear_working_pressure_angle(gearB->inv_alphaw);
-		gearB->y = ((gearB->z + gearA->z) / 2.0) * (((cos(gearB->alpha) / cos (gearB->alphaw)) - 1.0));
-		gearB->a = ((gearB->z + gearA->z) / (2.0 + (gearB->y))) * gearB->m;
-		gearB->a = (((gearB->z + gearA->z) / 2.0) + (gearB->y)) * gearB->m;
-		gearB->d = (gearB->z * gearB->m);
-		gearB->db = gearB->d * cos(gearB->alpha);
-		gearB->dw = gearB->db / cos(gearB->alphaw);
-		gearB->ha = (1.0 + gearB->y - gearA->x) * gearB->m;
-		gearB->h = (2.25 + gearB->y - (gearB->x + gearA->x)) * gearB->m;
-		gearB->da = gearB->d + 2.0 * gearB->ha;
-		gearB->df = gearB->da - (2.0 * gearB->h);
-
-		gearB->tooth_angle = DEG2RAD(360.0 / gearA->z);
-		gearB->tip_tetha = (M_PI + (4.0 * gearB->x * tan(gearB->alpha) )) / (gearB->z);
-
-		gearB->rising_wp_dphi = involute_function_d_to_phi(gearB->dw, gearB->db);
-		gearB->rising_dphi = involute_function_d_to_phi(gearB->da, gearB->db);
-		gearB->tip_dphi = (DEG2RAD(180.0) / gearB->z) - (2.0 * (gearB->rising_dphi - gearB->rising_wp_dphi));
-		if (gearB->tip_dphi <= 0.0) {
-			gearB->tip_dphi = 0;
-		}
-		gearB->falling_dphi = gearB->rising_dphi;
-		gearB->falling_wp_dphi = gearB->rising_wp_dphi;
-		gearB->root_dphi = gearB->tooth_angle - (gearB->tip_dphi + gearB->rising_dphi + gearB->rising_dphi);
-		if (gearB->root_dphi <= 0.0) {
-			gearB->root_dphi = 0.0;
-		}
-
-		gearB->rising_phi = gearB->rising_dphi;
-		gearB->tip_phi = gearB->rising_phi + gearB->tip_dphi;
-		gearB->falling_phi = gearB->tip_phi + gearB->falling_dphi;
-		gearB->root_phi = gearB->falling_phi + gearB->root_dphi;
-
-
-
-		//gear_calculator_x1x2(&x1, &x2, gearA->a, gearA->m, gearA->z, gearB->z, gearA->alpha);
-		//gearA->x = x1;
-		//gearB->x = x2;
-		//printf("x:         %2.4f %2.4f\r\n", 	(gearA->x), (gearB->x));
-		//printf("x:         %2.4f %2.4f\r\n", 	(x1), (x2));
-
-
+		gear->rising_phi = gear->rising_dphi;
+		gear->tip_phi = gear->rising_phi + gear->tip_dphi;
+		gear->falling_phi = gear->tip_phi + gear->falling_dphi;
+		gear->root_phi = gear->falling_phi + gear->root_dphi;
 	}
-
-	//{
-	//	unsigned int x = 0;
-	//	for ( x = 0; x < 180; x+= 10) {
-	//		float angle = DEG2RAD(x);
-	//		float rb = 10.0;
-	//		float resultx = rb * (cos(angle) + (angle * sin(angle)) );
-	//		float resulty = rb * (sin(angle) + (angle * cos(angle)) );
-	//		printf("result:        %2.4f %2.4f\r\n", resultx, resulty);
-	//	}
-	//}
-
 }
 
 void gear_print(GearStructure *gear) {

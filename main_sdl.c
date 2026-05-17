@@ -164,7 +164,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		frames++;
 		float rotation = frames * 0.001;
 
-		gear_profile_shifter_calculator(module, DEG2RAD(pressureAngleDeg), z1, z2, x1, x2, &gearA, &gearB);
+		gear_profile_shifter_calculator(module, DEG2RAD(pressureAngleDeg), z1, z2, x1, x2, &gearA);
+		gear_profile_shifter_calculator(module, DEG2RAD(pressureAngleDeg), z2, z1, x2, x1, &gearB);
 		distance = gearA.a;
 
 
@@ -173,7 +174,9 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 			gear_dxf(0.0, 0.0, 0.0, visible_diameters, &gearA, "gearA.dxf");
 			gear_dxf(distance, 0.0, 0.0, visible_diameters, &gearB, "gearB.dxf");
 
+			printf("Gear A\r\n");
 			gear_print(&gearA);
+			printf("Gear B\r\n");
 			gear_print(&gearB);
 
 		}
