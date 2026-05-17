@@ -24,6 +24,7 @@ float x2 = 0.0;
 GearStructure gearA;
 GearStructure gearB;
 float distance = 0.0;
+unsigned int visible_diameters = 0;
 
 
 int file_exists(const char *fname);
@@ -136,8 +137,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 				cJSON_AddNumberToObject(root, "z2", 24);
 				cJSON_AddNumberToObject(root, "m", 3.0);
 				cJSON_AddNumberToObject(root, "p", 20.0);
-				cJSON_AddNumberToObject(root, "x1", 0.36);
-				cJSON_AddNumberToObject(root, "x2", 0.6);
+				cJSON_AddNumberToObject(root, "x1", 0.6);
+				cJSON_AddNumberToObject(root, "x2", 0.36);
 
 				char *json = cJSON_Print(root);
 
@@ -169,8 +170,12 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 		if (singleShoot) {
 			singleShoot = 0;
-			gear_dxf(0.0, 0.0, 0.0, &gearA, "gearA.dxf");
-			gear_dxf(distance, 0.0, 0.0, &gearB, "gearB.dxf");
+			gear_dxf(0.0, 0.0, 0.0, visible_diameters, &gearA, "gearA.dxf");
+			gear_dxf(distance, 0.0, 0.0, visible_diameters, &gearB, "gearB.dxf");
+
+			gear_print(&gearA);
+			gear_print(&gearB);
+
 		}
 		
 	
@@ -178,8 +183,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		float rotationA = rotation;
 		float rotationB = rotation * (gearA.z / gearB.z) + DEG2RAD(180.0) + (0.7 * DEG2RAD(360.0) / gearB.z);
 		
-		gear_sdl(0.0, 0.0, rotationA, &gearA);
-		gear_sdl(distance, 0.0, -rotationB, &gearB);
+		gear_sdl(0.0, 0.0, rotationA, visible_diameters, &gearA);
+		gear_sdl(distance, 0.0, -rotationB, visible_diameters, &gearB);
 		SDL_RenderPresent(renderer);
 		{
 			SDL_Event event;
@@ -244,6 +249,15 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 								}
 							}
 
+							if (event.key.keysym.sym == SDLK_3) {
+								if (visible_diameters) {
+									visible_diameters = 0;
+								} else {
+									visible_diameters = 1;
+								}
+							}
+
+
 							if (event.key.keysym.sym == SDLK_m) {
 								if (pressureAngleDeg < 90.0) {
 									pressureAngleDeg += 1.0;
@@ -270,20 +284,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 							if (event.key.keysym.sym == SDLK_q) {
 								gameRunning = 0;
 							}
-							if (event.key.keysym.sym == SDLK_KP_PLUS) {
-								frames++;
-							}
-							if (event.key.keysym.sym == SDLK_KP_MINUS) {
-								frames--;
-							}
-							if (event.key.keysym.sym == SDLK_MINUS) {
-								frames++;
-							}
-							if (event.key.keysym.sym == SDLK_PLUS) {
-								frames--;
-							}
-
-
 						}
 						break;
 					}

@@ -7,7 +7,7 @@
 	extern unsigned int drawer_sdl;
 	extern FILE *dxf_file;
 	
-	extern void gear_dxf(float x, float y, float rotation, GearStructure *gear, char *str);
-	extern void gear_sdl(float x, float y, float rotation, GearStructure *gear);
+	extern void gear_dxf(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear, char *str);
+	extern void gear_sdl(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear);
 
 #endif

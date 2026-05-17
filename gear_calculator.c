@@ -70,9 +70,15 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 		gearA->rising_wp_dphi = involute_function_d_to_phi(gearA->dw, gearA->db);
 		gearA->rising_dphi = involute_function_d_to_phi(gearA->da, gearA->db);
 		gearA->tip_dphi = (DEG2RAD(180.0) / gearA->z) - (2.0 * (gearA->rising_dphi - gearA->rising_wp_dphi));
+		if (gearA->tip_dphi <= 0.0) {
+			gearA->tip_dphi = 0;
+		}
 		gearA->falling_dphi = gearA->rising_dphi;
 		gearA->falling_wp_dphi = gearA->rising_wp_dphi;
 		gearA->root_dphi = gearA->tooth_angle - (gearA->tip_dphi + gearA->rising_dphi + gearA->rising_dphi);
+		if (gearA->root_dphi <= 0.0) {
+			gearA->root_dphi = 0.0;
+		}
 
 		gearA->rising_phi = gearA->rising_dphi;
 		gearA->tip_phi = gearA->rising_phi + gearA->tip_dphi;
@@ -98,9 +104,15 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 		gearB->rising_wp_dphi = involute_function_d_to_phi(gearB->dw, gearB->db);
 		gearB->rising_dphi = involute_function_d_to_phi(gearB->da, gearB->db);
 		gearB->tip_dphi = (DEG2RAD(180.0) / gearB->z) - (2.0 * (gearB->rising_dphi - gearB->rising_wp_dphi));
+		if (gearB->tip_dphi <= 0.0) {
+			gearB->tip_dphi = 0;
+		}
 		gearB->falling_dphi = gearB->rising_dphi;
 		gearB->falling_wp_dphi = gearB->rising_wp_dphi;
 		gearB->root_dphi = gearB->tooth_angle - (gearB->tip_dphi + gearB->rising_dphi + gearB->rising_dphi);
+		if (gearB->root_dphi <= 0.0) {
+			gearB->root_dphi = 0.0;
+		}
 
 		gearB->rising_phi = gearB->rising_dphi;
 		gearB->tip_phi = gearB->rising_phi + gearB->tip_dphi;
@@ -115,43 +127,7 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 		//printf("x:         %2.4f %2.4f\r\n", 	(gearA->x), (gearB->x));
 		//printf("x:         %2.4f %2.4f\r\n", 	(x1), (x2));
 
-#if 0
-		printf("m:         %2.4f\r\n", 			(gearA->m));
-		printf("alpha:     %2.4f\r\n", 			RAD2DEG(gearA->alpha));
-		printf("z:         %2.4f %2.4f\r\n", 	(gearA->z), (gearB->z));
-		printf("x:         %2.4f %2.4f\r\n", 	(gearA->x), (gearB->x));
 
-		printf("inv_alphaw:%2.4f\r\n", 			(gearA->inv_alphaw));
-		printf("alphaw:    %2.4f\r\n", 			RAD2DEG(gearA->alphaw));
-
-		printf("y:         %2.4f\r\n", 			(gearA->y));
-		printf("a:         %2.4f\r\n", 			(gearA->a));
-		printf("d:         %2.4f %2.4f\r\n", 	(gearA->d), (gearB->d));
-		printf("db:        %2.4f %2.4f\r\n", 	(gearA->db), (gearB->db));
-		printf("dw:        %2.4f %2.4f\r\n", 	(gearA->dw), (gearB->dw));
-		printf("ha:        %2.4f %2.4f\r\n", 	(gearA->ha), (gearB->ha));
-		printf("h:         %2.4f\r\n", 			(gearA->h), (gearB->h));
-		printf("da:        %2.4f %2.4f\r\n", 	(gearA->da), (gearB->da));
-		printf("df:        %2.4f %2.4f\r\n", 	(gearA->df), (gearB->df));
-		
-		
-		
-		printf("tooth_angle        %2.4f\r\n",	RAD2DEG(gearA->tooth_angle));
-		printf("tip_tetha          %2.4f\r\n",	RAD2DEG(gearA->tip_tetha));
-
-		printf("rising_wp_dphi:   %2.4f\r\n",	RAD2DEG(gearA->rising_wp_dphi));
-		printf("rising_dphi:      %2.4f\r\n",	RAD2DEG(gearA->rising_dphi));
-		printf("tip_dphi:         %2.4f\r\n",	RAD2DEG(gearA->tip_dphi));
-		printf("falling_dphi:     %2.4f\r\n",	RAD2DEG(gearA->falling_dphi));
-		printf("falling_wp_dphi:  %2.4f\r\n",	RAD2DEG(gearA->falling_wp_dphi));
-		printf("root_dphi:        %2.4f\r\n",	RAD2DEG(gearA->root_dphi));
-
-		printf("rising_phi:       %2.4f\r\n",	RAD2DEG(gearA->rising_phi));
-		printf("tip_phi:          %2.4f\r\n",	RAD2DEG(gearA->tip_phi));
-		printf("falling_phi:      %2.4f\r\n",	RAD2DEG(gearA->falling_phi));
-		printf("root_phi:         %2.4f\r\n",	RAD2DEG(gearA->root_phi));
-
-#endif
 	}
 
 	//{
@@ -165,6 +141,45 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 	//	}
 	//}
 
+}
+
+void gear_print(GearStructure *gear) {
+	if (gear != NULL) {
+		printf("m:         %2.4f\r\n",	(gear->m));
+		printf("alpha:     %2.4f\r\n",	RAD2DEG(gear->alpha));
+		printf("z:         %2.4f\r\n", 	(gear->z));
+		printf("x:         %2.4f\r\n", 	(gear->x));
+
+		printf("inv_alphaw:%2.4f\r\n",	(gear->inv_alphaw));
+		printf("alphaw:    %2.4f\r\n",	RAD2DEG(gear->alphaw));
+
+		printf("y:         %2.4f\r\n",	(gear->y));
+		printf("a:         %2.4f\r\n",	(gear->a));
+		printf("d:         %2.4f\r\n", 	(gear->d));
+		printf("db:        %2.4f\r\n", 	(gear->db));
+		printf("dw:        %2.4f\r\n", 	(gear->dw));
+		printf("ha:        %2.4f\r\n", 	(gear->ha));
+		printf("h:         %2.4f\r\n",	(gear->h));
+		printf("da:        %2.4f\r\n", 	(gear->da));
+		printf("df:        %2.4f\r\n", 	(gear->df));
+		
+		
+		
+		printf("tooth_angle        %2.4f\r\n",	RAD2DEG(gear->tooth_angle));
+		printf("tip_tetha          %2.4f\r\n",	RAD2DEG(gear->tip_tetha));
+
+		printf("rising_wp_dphi:   %2.4f\r\n",	RAD2DEG(gear->rising_wp_dphi));
+		printf("rising_dphi:      %2.4f\r\n",	RAD2DEG(gear->rising_dphi));
+		printf("tip_dphi:         %2.4f\r\n",	RAD2DEG(gear->tip_dphi));
+		printf("falling_dphi:     %2.4f\r\n",	RAD2DEG(gear->falling_dphi));
+		printf("falling_wp_dphi:  %2.4f\r\n",	RAD2DEG(gear->falling_wp_dphi));
+		printf("root_dphi:        %2.4f\r\n",	RAD2DEG(gear->root_dphi));
+
+		printf("rising_phi:       %2.4f\r\n",	RAD2DEG(gear->rising_phi));
+		printf("tip_phi:          %2.4f\r\n",	RAD2DEG(gear->tip_phi));
+		printf("falling_phi:      %2.4f\r\n",	RAD2DEG(gear->falling_phi));
+		printf("root_phi:         %2.4f\r\n",	RAD2DEG(gear->root_phi));
+	}
 }
 
 void gear_calculator_x1x2(float *x1, float *x2, float a, float m, float z1, float z2, float alpha) {

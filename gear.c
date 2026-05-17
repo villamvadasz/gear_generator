@@ -11,26 +11,26 @@ unsigned int drawer_dxf = 0;
 unsigned int drawer_sdl = 0;
 FILE *dxf_file;
 
-static void gear_draw_profile_shifter_calculator(float x, float y, float rotation, GearStructure *gear);
+static void gear_draw_profile_shifter_calculator(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear);
 
-void gear_dxf(float x, float y, float rotation, GearStructure *gear, char *str) {
+void gear_dxf(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear, char *str) {
 	drawer_dxf = 1;
 	dxf_file = fopen(str, "w");
 	dxf_begin(dxf_file);
 	
-	gear_draw_profile_shifter_calculator(x, y, rotation, gear);
+	gear_draw_profile_shifter_calculator(x, y, rotation, visible_diameters, gear);
 	
 	dxf_end(dxf_file);
 	drawer_dxf = 0;
 }
 
-void gear_sdl(float x, float y, float rotation, GearStructure *gear) {
+void gear_sdl(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear) {
 	drawer_sdl = 1;
-	gear_draw_profile_shifter_calculator(x, y, rotation, gear);
+	gear_draw_profile_shifter_calculator(x, y, rotation, visible_diameters, gear);
 	drawer_sdl = 0;
 }
 
-static void gear_draw_profile_shifter_calculator(float x, float y, float rotation, GearStructure *gear) {
+static void gear_draw_profile_shifter_calculator(float x, float y, float rotation, unsigned int visible_diameters, GearStructure *gear) {
 	if (gear != NULL) {
 		
 		float angle = 0.0;
@@ -44,14 +44,14 @@ static void gear_draw_profile_shifter_calculator(float x, float y, float rotatio
 		rotation += -anglePerTooth / 4.0;
 
 
-		Point Pa = createPoint(0.0, 0.0);
+		Point Pa = createPoint(x, 0.0);
 		Circle Creference = createCircle(Pa, gear->d / 2.0);
 		Circle Cbase = createCircle(Pa, gear->db / 2.0);
 		Circle Cworkingpitch = createCircle(Pa, gear->dw / 2.0);
 		Circle Ctip = createCircle(Pa, gear->da / 2.0);
 		Circle Croot = createCircle(Pa, gear->df / 2.0);
 
-		#if 0
+		if (visible_diameters) {
 			unsigned char tempStr[128];
 			drawRed = 1;
 			sprintf(tempStr, "Croot d=%2.4f", Croot.r * 2.0);
@@ -76,7 +76,7 @@ static void gear_draw_profile_shifter_calculator(float x, float y, float rotatio
 			sprintf(tempStr, "Cworkingpitch d=%2.4f", Cworkingpitch.r * 2.0);
 			renderText_dxf(tempStr, Cworkingpitch.o.x, Cworkingpitch.o.y + Cworkingpitch.r);
 			drawCircle_dxf(Cworkingpitch);
-		#endif
+		}
 
 		
 		gear_draw_profile_shifter_calculator_segment_start();
