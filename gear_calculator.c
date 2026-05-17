@@ -109,7 +109,7 @@ void gear_profile_shifter_calculator(float m, float alpha, float z1, float z2, f
 
 
 
-		gear_calculator_x1x2(&x1, &x2, gearA->a, gearA->m, gearA->z, gearB->z, gearA->alpha);
+		//gear_calculator_x1x2(&x1, &x2, gearA->a, gearA->m, gearA->z, gearB->z, gearA->alpha);
 		//gearA->x = x1;
 		//gearB->x = x2;
 		//printf("x:         %2.4f %2.4f\r\n", 	(gearA->x), (gearB->x));

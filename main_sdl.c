@@ -21,11 +21,16 @@ float module = 3.0;
 float pressureAngleDeg = 20.0;
 float x1 = 0.0;
 float x2 = 0.0;
+GearStructure gearA;
+GearStructure gearB;
+float distance = 0.0;
+
 
 int file_exists(const char *fname);
 
 //int main(int argc, char* argv[]) {
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+	static unsigned int singleShoot = 1;
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -147,9 +152,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		}
 	}
 	
-	gear_dxf(z1, z2, module, pressureAngleDeg, x1, x2, "gearA.dxf");
-	gear_dxf(z2, z1, module, pressureAngleDeg, x2, x1, "gearB.dxf");
-	
+		
     // Wait for 5 seconds
 	gameRunning = 1;
 	unsigned int frames = 0;
@@ -159,9 +162,24 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		SDL_RenderClear(renderer);
 		frames++;
 		float rotation = frames * 0.001;
-		gear_sdl(z1, z2, module, pressureAngleDeg, x1, x2, rotation);
-		//gear_sdl(12, module, 20.0, 0.6, 0.36, rotation);
-		//gear_sdl(24, 12, module, 20.0, 0.36, 0.6, rotation);
+
+		gear_profile_shifter_calculator(module, DEG2RAD(pressureAngleDeg), z1, z2, x1, x2, &gearA, &gearB);
+		distance = gearA.a;
+
+
+		if (singleShoot) {
+			singleShoot = 0;
+			gear_dxf(0.0, 0.0, 0.0, &gearA, "gearA.dxf");
+			gear_dxf(distance, 0.0, 0.0, &gearB, "gearB.dxf");
+		}
+		
+	
+		//rotation = 0.0;
+		float rotationA = rotation;
+		float rotationB = rotation * (gearA.z / gearB.z) + DEG2RAD(180.0) + (0.7 * DEG2RAD(360.0) / gearB.z);
+		
+		gear_sdl(0.0, 0.0, rotationA, &gearA);
+		gear_sdl(distance, 0.0, -rotationB, &gearB);
 		SDL_RenderPresent(renderer);
 		{
 			SDL_Event event;
@@ -203,21 +221,6 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 								OFFSET_Y *= ZOOM_FACTOR;
 							}
 
-							extern float gear_addendum;
-							extern float gear_dedendum;
-							if (event.key.keysym.sym == SDLK_1) {
-								gear_addendum += 0.05;
-							}
-							if (event.key.keysym.sym == SDLK_2) {
-								gear_addendum -= 0.05;
-							}
-							if (event.key.keysym.sym == SDLK_3) {
-								gear_dedendum += 0.05;
-							}
-							if (event.key.keysym.sym == SDLK_4) {
-								gear_dedendum -= 0.05;
-							}
-
 							if (event.key.keysym.sym == SDLK_5) {
 								module += 1.0;
 							}
@@ -232,6 +235,15 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 									z1 -= 1;
 								}
 							}
+							if (event.key.keysym.sym == SDLK_1) {
+								z2 += 1;
+							}
+							if (event.key.keysym.sym == SDLK_2) {
+								if (z2 > 1) {
+									z2 -= 1;
+								}
+							}
+
 							if (event.key.keysym.sym == SDLK_m) {
 								if (pressureAngleDeg < 90.0) {
 									pressureAngleDeg += 1.0;
